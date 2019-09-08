@@ -1,3 +1,9 @@
+lurker = require("external.lurker")
+
+
+function love.update()
+    lurker.update()
+end
 
 -- Just test to print to the graphics window and the terminal
 tmp = 1
