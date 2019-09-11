@@ -1,0 +1,12 @@
+[submodule "external/hump"]
+	path = external/hump
+	url = git@github.com:vrld/hump.git
+[submodule "external/bump.lua"]
+	path = external/bump.lua
+	url = git@github.com:kikito/bump.lua.git
+[submodule "external/bitser"]
+	path = external/bitser
+	url = git@github.com:gvx/bitser.git
+[submodule "external/suit"]
+	path = external/suit
+	url = git@github.com:vrld/suit.git
