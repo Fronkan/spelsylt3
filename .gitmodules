@@ -2,7 +2,7 @@
 	path = external/hump
 	url = git@github.com:vrld/hump.git
 [submodule "external/bump.lua"]
-	path = external/bump.lua
+	path = external/bump_lib
 	url = git@github.com:kikito/bump.lua.git
 [submodule "external/bitser"]
 	path = external/bitser
