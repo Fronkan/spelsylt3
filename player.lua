@@ -1,19 +1,23 @@
 Class = require("external.hump.class")
 Vector = require("external.hump.vector")
+WeaponSystem = require("weaponsystem")
+BubbleParticles = require("bubbleparticles")
 require("utils")
 
 Player = Class{
     init = function(self, x,y)
-        self.pos = Vector(0,0)
+        self.pos = Vector(x,y)
         self.rot = 0
         self.rot_speed = 0.2
         self.vel = Vector(0,0)
         self.cur_acc = Vector(0,0)
-        self.acc_force = 10
+        self.acc_force = 20
         self.img = love.graphics.newImage("assets/monocle.png")
         self.size = Vector(self.img:getWidth(), self.img:getHeight())
         self.max_thrust = 20
-        self.max_speed = 20
+        self.max_speed = 40
+        self.ws = WeaponSystem()
+        self.bubbles = BubbleParticles(self)
     end;
 
     update = function(self, dt)
@@ -35,6 +39,11 @@ Player = Class{
             vertical = 0 
         end
 
+        if love.keyboard.isDown("space") then
+            self.ws:fire(self.pos, self.rot)
+        end
+        self.ws:update(dt)
+
         self.rot = self.rot + horizontal*self.rot_speed*math.pi/2*dt
         direction = Vector.fromPolar(self.rot+math.pi/2, Vector(horizontal, vertical):len())
         
@@ -55,10 +64,12 @@ Player = Class{
 
         self.pos.x = self.pos.x + self.vel.x * dt
         self.pos.y = self.pos.y + self.vel.y * dt
-
+        self.bubbles:update(dt, self.pos, self.vel, self.rot)
     end;
 
+
     draw = function(self)
+        self.bubbles:draw()
         love.graphics.print(
             "Pos: ".. math.floor(self.pos.x).. ", "..math.floor(self.pos.y),
              200, 
@@ -78,6 +89,7 @@ Player = Class{
             self.size.x/2, -- origin offset x
             self.size.y/2 -- origin offset y
         )
+        self.ws:draw()
     end;
 }
 
