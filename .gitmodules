@@ -10,3 +10,6 @@
 [submodule "external/suit"]
 	path = external/suit
 	url = git@github.com:vrld/suit.git
+[submodule "HC"]
+	path = external/HC
+	url = git@github.com:vrld/HC.git
