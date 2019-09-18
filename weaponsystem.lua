@@ -1,7 +1,7 @@
 Class = require("external.hump.class")
 Torpedo = require("torpedo")
 
-WeaponSystem = Class {
+local WeaponSystem = Class {
     init = function(self)
         self.torpedos = {}
         self.cool_down = 2
@@ -33,7 +33,7 @@ WeaponSystem = Class {
     fire = function(self, pos, rot)
         if self.reload_timer == 0 then
             print("fire!")
-            local torpedo = Torpedo(pos, rot, 20)
+            local torpedo = Torpedo(pos, rot, 150)
             table.insert(self.torpedos,torpedo)
             self.reload_timer = self.cool_down
         else

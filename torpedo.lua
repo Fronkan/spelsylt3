@@ -1,12 +1,12 @@
 Class = require("external.hump.class")
 Vector = require("external.hump.vector")
 
-Torpedo = Class{
+local Torpedo = Class{
     init = function(self, pos, rot, speed)
         self.pos = pos
         self.rot = rot
         self.speed = speed
-        self.img = love.graphics.newImage("assets/mustasch.png")
+        self.img = love.graphics.newImage("assets/torpedo.png")
         self.size = Vector(self.img:getWidth(), self.img:getHeight())
         self.is_crashed = false
         self.max_trabel_time = 5
@@ -28,8 +28,8 @@ Torpedo = Class{
             self.pos.x,
             self.pos.y,
             self.rot,
-            0.2, -- scale x
-            0.2, -- scale y 
+            0.05, -- scale x
+            0.05, -- scale y 
             self.size.x/2, -- origin offset x
             self.size.y/2 -- origin offset y
         )
