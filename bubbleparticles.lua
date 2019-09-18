@@ -1,6 +1,6 @@
 Class = require("external.hump.class")
 
-BubbleParticles = Class {
+local BubbleParticles = Class {
     init = function(self)
         self.pos = Vector(0,0)
         self.vel = Vector(0,0)
@@ -22,7 +22,7 @@ BubbleParticles = Class {
         self.psystem:setColors(1, 1, 1, 1, 1, 1, 1, 0) -- Fade to transparency.
     end;
 
-    update = function(self, dt, pos, vel, rot)
+    update = function(self, dt, pos, vel, rot, thrust_direction)
         self.pos = pos
         self.vel = vel
         self.rot = rot
@@ -34,7 +34,9 @@ BubbleParticles = Class {
             false
         )
         self.psystem:setParticleLifetime(1, self.vel:len()*0.05)
-        self.psystem:setDirection((self.rot+math.pi/2))
+        if thrust_direction ~= 0 then
+            self.psystem:setDirection((self.rot- (thrust_direction*math.pi/2)))
+        end
         self.psystem:setSpeed( 0, self.vel:len())
         self.psystem:setEmissionRate(self.vel:len())
         self.psystem:update(dt)
