@@ -1,16 +1,18 @@
 lurker = require("external.lurker")
 Player = require("player")
 Bump = require("external.bump_lib.bump")
+Enemy = require("enemy")
 local HumpCamera = require("external/hump/camera")
 
 local scale = 1
 
 
 local player = Player(0,0)
+local enemy = Enemy(-200, 100, player)
 
 function love.load()
     GAME_STATE = {
-        PYSICS_WORLD = Bump.newWorld()
+        PYSICS_WORLD = ""
     }
     camera = HumpCamera(0,0, scale, 0)
 end
@@ -18,6 +20,7 @@ end
 function love.update(dt)
     lurker.update()
     player:update(dt)
+    enemy:update(dt)
 end
 
 -- Just test to print to the graphics window and the terminal
@@ -31,5 +34,6 @@ function love.draw()
         tmp = tmp +  1
     end
     player:draw()
+    enemy:draw()
     camera:detach()
 end
