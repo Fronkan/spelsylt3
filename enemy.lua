@@ -27,9 +27,7 @@ local Enemy = Class{
         local fire = false
         local target_vector = self.pos - self.target.pos
         local target_angle = target_vector:angleTo(Vector.fromPolar(self.rot+math.pi/2, 1))
-        print(target_angle)
         if  target_angle < 0.1 and target_angle > -0.1 then
-            print("SEE YOU")
             horizontal = 0
             fire = true
         elseif target_angle < 0 then

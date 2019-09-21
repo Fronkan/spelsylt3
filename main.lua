@@ -7,27 +7,23 @@ local HumpCamera = require("external/hump/camera")
 local scale = 1
 
 
-local player = Player(0,0)
-local enemy = Enemy(-200, 100, player)
+
 
 function love.load()
     GAME_STATE = {
-        PYSICS_WORLD = HC
+        PYSICS_WORLD = HC.new(),
     }
+    player = Player(0,0)
+    enemy = Enemy(-200, 100, player)
     camera = HumpCamera(0,0, scale, 0)
-
-    -- HC test½
-    rect = HC.rectangle(0,0,400,20)
-    -- END HC test
 end
 
 function love.update(dt)
-    -- HC test
-    rect:rotate(dt)
-    -- END HC test
+    
     lurker.update()
     player:update(dt)
     enemy:update(dt)
+
     local dx,dy = player.pos.x - camera.x, player.pos.y - camera.y
     camera:move(dx/2, dy/2)
 end
@@ -44,9 +40,5 @@ function love.draw()
     end
     player:draw()
     enemy:draw()
-    -- HC test
-    love.graphics.setColor(255,255,255)
-    rect:draw('fill')
-    -- END HC test
     camera:detach()
 end

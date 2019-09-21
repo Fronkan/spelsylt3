@@ -32,12 +32,9 @@ local WeaponSystem = Class {
 
     fire = function(self, pos, rot)
         if self.reload_timer == 0 then
-            print("fire!")
             local torpedo = Torpedo(pos, rot, 150)
             table.insert(self.torpedos,torpedo)
             self.reload_timer = self.cool_down
-        else
-            print("Cool down: "..self.reload_timer)
         end
     end;
 

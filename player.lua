@@ -14,10 +14,18 @@ local Player = Class{
         self.acc_force = 20
         self.img = love.graphics.newImage("assets/player_sub.png")
         self.size = Vector(self.img:getWidth(), self.img:getHeight())
+        self.scale = 0.2
         self.max_thrust = 20
         self.max_speed = 40
         self.ws = WeaponSystem()
         self.bubbles = BubbleParticles(self)
+        self.collider = GAME_STATE.PYSICS_WORLD:rectangle(
+            self.pos.x - self.size.x*self.scale/2,
+            self.pos.y - self.size.y*self.scale/2,
+            self.size.x*self.scale,
+            self.size.y*self.scale
+        )
+        self.collider:setRotation(self.rot)
     end;
 
     update = function(self, dt)
@@ -64,6 +72,11 @@ local Player = Class{
 
         self.pos.x = self.pos.x + self.vel.x * dt
         self.pos.y = self.pos.y + self.vel.y * dt
+        self.collider:moveTo(self.pos.x, self.pos.y)
+        self.collider:setRotation(self.rot)
+        if self.collider.IS_HIT == true then
+            --print("IM HIT SO BAD!")
+        end
         self.bubbles:update(dt, self.pos + (Vector.fromPolar(self.rot+math.pi/2,1)*98), self.vel, self.rot, vertical)
     end;
 
@@ -85,12 +98,12 @@ local Player = Class{
             self.pos.x, 
             self.pos.y, 
             self.rot, 
-            0.2, -- scale x
-            0.2, -- scale y 
+            self.scale, -- scale x
+            self.scale, -- scale y 
             self.size.x/2, -- origin offset x
             self.size.y/2 -- origin offset y
         )
-
+        self.collider:draw()
     end;
 }
 
