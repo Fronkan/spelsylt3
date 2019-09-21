@@ -27,6 +27,7 @@ local Player = Class{
             ENTITY_SUBMARINE
         )
         self.ws = WeaponSystem(100, 20, self.collider)
+        self.ws.cool_down = 1
     end;
 
     update = function(self, dt)
