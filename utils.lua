@@ -19,15 +19,31 @@ function clamp_abs(val, max)
     end
 end
 
-function create_rect_collider(center_pos, size, rot)
-    local collider = GAME_STATE.PYSICS_WORLD:rectangle(
+function add_custom_collider_data(collider, entity_type)
+    collider.IS_HIT = false
+    collider.RAW_DMG = 0
+    collider.ENTITY_TYPE = entity_type
+    return collider
+end
+
+function create_rect_collider(center_pos, size, rot, entity_type)
+    local collider = game.PYSICS_WORLD:rectangle(
         center_pos.x ,
         center_pos.y,
         size.x,
         size.y
     )
     collider:setRotation(rot)
-    collider.IS_HIT = false
-    collider.RAW_DMG = 0
+    collider = add_custom_collider_data(collider, entity_type)
+    return collider
+end
+
+function create_circle_collider(center_pos, radius, entity_type)
+    local collider = game.PYSICS_WORLD:circle(
+        center_pos.x ,
+        center_pos.y,
+        radius
+    )
+    collider = add_custom_collider_data(collider, entity_type)
     return collider
 end

@@ -1,31 +1,32 @@
-Class = require("external.hump.class")
-Vector = require("external.hump.vector")
-WeaponSystem = require("weaponsystem")
-BubbleParticles = require("bubbleparticles")
+local Class = require("external.hump.class")
+local Vector = require("external.hump.vector")
+local WeaponSystem = require("weaponsystem")
+local BubbleParticles = require("bubbleparticles")
 require("utils")
 
 local Player = Class{
-    init = function(self, x,y)
-        self.pos = Vector(x,y)
+    init = function(self, pos)
+        self.pos = pos
         self.is_alive = true
         self.HP = 100
         self.rot = 0
-        self.rot_speed = 0.2
+        self.rot_speed = 0.4
         self.vel = Vector(0,0)
         self.cur_acc = Vector(0,0)
-        self.acc_force = 20
+        self.acc_force = 40
         self.img = love.graphics.newImage("assets/player_sub.png")
         self.size = Vector(self.img:getWidth(), self.img:getHeight())
         self.scale = 0.2
-        self.max_thrust = 20
-        self.max_speed = 40
+        self.max_thrust = 40
+        self.max_speed = 60
         self.bubbles = BubbleParticles(self)
         self.collider = create_rect_collider(
             self.pos - self.size*self.scale/2,
             self.size*self.scale,
-            self.rot 
+            self.rot,
+            ENTITY_SUBMARINE
         )
-        self.ws = WeaponSystem(self.collider)
+        self.ws = WeaponSystem(100, 20, self.collider)
     end;
 
     update = function(self, dt)
@@ -39,7 +40,7 @@ local Player = Class{
             end
         end
         local vertical = 0
-        local horizontal = 0      
+        local horizontal = 0
         if self.is_alive then
             if love.keyboard.isDown("right") then
                 horizontal = 1
@@ -85,8 +86,12 @@ local Player = Class{
             self.pos.y = self.pos.y + self.vel.y * dt
             self.collider:moveTo(self.pos.x, self.pos.y)
             self.collider:setRotation(self.rot)
-            if self.collider.IS_HIT == true then
-                --print("IM HIT SO BAD!")
+            for collider, delta in pairs(game.PYSICS_WORLD:collisions(self.collider)) do
+                if collider.ENTITY_TYPE == ENTITY_SUBMARINE then
+                    self.pos.x = self.pos.x + delta.x
+                    self.pos.y = self.pos.y + delta.y
+                    self.collider:moveTo(self.pos.x, self.pos.y)
+                end
             end
             self.bubbles:update(dt, self.pos + (Vector.fromPolar(self.rot+math.pi/2,1)*98), self.vel, self.rot, vertical)
     end;
@@ -107,7 +112,7 @@ local Player = Class{
                 self.size.y/2 -- origin offset y
             )
         end
-        self.collider:draw()
+        --self.collider:draw()
     end;
 
 }

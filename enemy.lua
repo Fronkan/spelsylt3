@@ -5,11 +5,11 @@ BubbleParticles = require("bubbleparticles")
 require("utils")
 
 local Enemy = Class{
-    init = function(self, x,y, target)
+    init = function(self, pos, ws, target)
         self.HP = 100
         self.is_alive = true
         self.target = target
-        self.pos = Vector(x,y)
+        self.pos = pos
         self.rot = 0
         self.rot_speed = 0.2
         self.vel = Vector(0,0)
@@ -23,9 +23,10 @@ local Enemy = Class{
         self.collider = create_rect_collider(
             self.pos - self.size*self.scale/2,
             self.size*self.scale,
-            self.rot
+            self.rot,
+            ENTITY_SUBMARINE
         )
-        self.ws = WeaponSystem(self.collider)
+        self.ws = ws
         self.bubbles = BubbleParticles(self)
     end;
 
@@ -45,14 +46,25 @@ local Enemy = Class{
         local fire = false
         if self.is_alive then
             local target_vector = self.pos - self.target.pos
+            print(target_vector:len())
             local target_angle = target_vector:angleTo(Vector.fromPolar(self.rot+math.pi/2, 1))
             if  target_angle < 0.1 and target_angle > -0.1 then
                 horizontal = 0
-                fire = true
+                if target_vector:len() < 600 then
+                    fire = true
+                end
             elseif target_angle < 0 then
                 horizontal = -1
             else
                 horizontal = 1
+            end
+
+            if target_angle < 0.4 and target_angle > -0.4 then
+                if target_vector:len() > 500 then
+                    vertical = -1
+                elseif target_vector:len() < 100 then
+                    vertical = 1
+                end
             end
 
         end
@@ -83,6 +95,13 @@ local Enemy = Class{
             self.pos.y = self.pos.y + self.vel.y * dt
             self.collider:moveTo(self.pos.x, self.pos.y)
             self.collider:setRotation(self.rot)
+            for collider, delta in pairs(game.PYSICS_WORLD:collisions(self.collider)) do
+                if collider.ENTITY_TYPE == ENTITY_SUBMARINE then
+                    self.pos.x = self.pos.x + delta.x
+                    self.pos.y = self.pos.y + delta.y
+                    self.collider:moveTo(self.pos.x, self.pos.y)
+                end
+            end
             self.bubbles:update(dt, self.pos + (Vector.fromPolar(self.rot+math.pi/2,1)*98), self.vel, self.rot, vertical)
 
     end;
@@ -103,13 +122,14 @@ local Enemy = Class{
                 self.size.y/2 -- origin offset y
             )
         end
-        self.collider:draw()
+        -- self.collider:draw()
     end;
 
     delete = function(self)
-        GAME_STATE.PYSICS_WORLD:remove(self.collider)
+        game.PYSICS_WORLD:remove(self.collider)
+        self.bubbles:delete()
         self = nil
-    end
+    end;
 }
 
 return Enemy

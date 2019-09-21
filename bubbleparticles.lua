@@ -45,6 +45,11 @@ local BubbleParticles = Class {
     draw = function(self)
         love.graphics.draw(self.psystem, self.pos.x, self.pos.y)
     end;
+
+    delete = function(self)
+        self.psystem:stop()
+        self = nil
+    end
 }
 
 return BubbleParticles

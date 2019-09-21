@@ -1,24 +1,27 @@
 Class = require("external.hump.class")
 Vector = require("external.hump.vector")
+Explosion = require("explosion")
 require("utils")
 
 local Torpedo = Class{
-    init = function(self, pos, rot, speed, collider_to_ignore)
+    init = function(self, pos, rot, speed, dmg, collider_to_ignore)
         self.pos = pos
         self.rot = rot
         self.speed = speed
-        self.dmg = 20
+        self.dmg = dmg
         self.img = love.graphics.newImage("assets/torpedo.png")
         self.size = Vector(self.img:getWidth(), self.img:getHeight())
         self.scale = 0.05
-        self.is_alive = false
+        self.is_alive = true
         self.max_trabel_time = 5
         self.cur_travel_time = 0
         self.collider = create_rect_collider(
             self.pos - self.size*self.scale/2,
             self.size*self.scale,
-            self.rot 
+            self.rot,
+            ENTITY_WEAPON
         )
+        print(collider_to_ignore)
         self.collider_to_ignore = collider_to_ignore
         self.bubbles = BubbleParticles(self)
     end;
@@ -26,7 +29,7 @@ local Torpedo = Class{
     update = function(self, dt)
 
         if self.collider.IS_HIT == true then
-            self.is_alive = true
+            self.is_alive = false
             return
         end
         local direction = Vector.fromPolar(self.rot-math.pi/2,1)
@@ -37,13 +40,13 @@ local Torpedo = Class{
         end
         self.collider:moveTo(self.pos.x, self.pos.y)
         self.collider:setRotation(self.rot)
-        local collisions = GAME_STATE.PYSICS_WORLD:collisions(self.collider) 
+        local collisions = game.PYSICS_WORLD:collisions(self.collider)
         for shape, delta in pairs(collisions) do
             if shape ~= self.collider_to_ignore then
                 shape.IS_HIT = true
                 shape.RAW_DMG = shape.RAW_DMG + self.dmg
-                if self.is_alive == false then
-                    self.is_alive = true
+                if self.is_alive then
+                    self.is_alive = false
                 end
             end
         end
@@ -51,7 +54,7 @@ local Torpedo = Class{
     end;
 
     draw = function(self)
-    if not self.is_alive then
+    if self.is_alive then
         self.bubbles:draw()
         love.graphics.draw(
             self.img,
@@ -64,16 +67,19 @@ local Torpedo = Class{
             self.size.y/2 -- origin offset y
         )
     end
-        self.collider:draw()
+        -- self.collider:draw()
     end;
 
     has_crashed = function(self)
-        return self.is_alive
+        return not self.is_alive
     end;
 
+    explode = function(self)
+        return Explosion(self.pos)
+    end;
 
     delete = function(self)
-        GAME_STATE.PYSICS_WORLD:remove(self.collider)
+        game.PYSICS_WORLD:remove(self.collider)
         self = nil
     end;
 }
