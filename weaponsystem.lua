@@ -2,10 +2,11 @@ Class = require("external.hump.class")
 Torpedo = require("torpedo")
 
 local WeaponSystem = Class {
-    init = function(self)
+    init = function(self, collider_to_ignore)
         self.torpedos = {}
         self.cool_down = 2
         self.reload_timer = 0
+        self.collider_to_ignore = collider_to_ignore
     end;
 
     update = function(self, dt)
@@ -23,6 +24,7 @@ local WeaponSystem = Class {
             torpedo:update(dt)
             if torpedo:has_crashed() then
                 table.insert(to_be_removed, idx)
+                torpedo:delete()
             end
         end
         for _, torpedo_idx in ipairs(to_be_removed) do
@@ -32,7 +34,7 @@ local WeaponSystem = Class {
 
     fire = function(self, pos, rot)
         if self.reload_timer == 0 then
-            local torpedo = Torpedo(pos, rot, 150)
+            local torpedo = Torpedo(pos, rot, 150, self.collider_to_ignore)
             table.insert(self.torpedos,torpedo)
             self.reload_timer = self.cool_down
         end

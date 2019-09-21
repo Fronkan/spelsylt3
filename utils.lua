@@ -18,3 +18,16 @@ function clamp_abs(val, max)
         return sign(val) * max
     end
 end
+
+function create_rect_collider(center_pos, size, rot)
+    local collider = GAME_STATE.PYSICS_WORLD:rectangle(
+        center_pos.x ,
+        center_pos.y,
+        size.x,
+        size.y
+    )
+    collider:setRotation(rot)
+    collider.IS_HIT = false
+    collider.RAW_DMG = 0
+    return collider
+end
