@@ -46,7 +46,7 @@ local Enemy = Class{
         local fire = false
         if self.is_alive then
             local target_vector = self.pos - self.target.pos
-            print(target_vector:len())
+            --print(target_vector:len())
             local target_angle = target_vector:angleTo(Vector.fromPolar(self.rot+math.pi/2, 1))
             if  target_angle < 0.1 and target_angle > -0.1 then
                 horizontal = 0
